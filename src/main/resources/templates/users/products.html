@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Products</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+<div class="container mx-auto p-6">
+  <h1 class="text-3xl font-bold text-gray-800 mb-6">Products for <span th:text="${user.name}" class="font-semibold"></span></h1>
+  <a th:href="@{/users/{id}/products/new(id=${user.id})}" class="bg-green-500 text-white p-2 rounded-lg hover:bg-green-600 mb-4 inline-block">Buy Product</a>
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white shadow-md rounded-lg">
+      <thead>
+      <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+        <th class="py-3 px-6 text-left">ID</th>
+        <th class="py-3 px-6 text-left">Product Name</th>
+        <th class="py-3 px-6 text-left">Quantity</th>
+        <th class="py-3 px-6 text-left">Total Price</th>
+        <th class="py-3 px-6 text-left">Actions</th>
+      </tr>
+      </thead>
+      <tbody class="text-gray-700" th:each="up : ${purchasedProducts}">
+      <tr class="border-b hover:bg-gray-50">
+        <td class="py-3 px-6 text-left" th:text="${up.id}"></td>
+        <td class="py-3 px-6 text-left" th:text="${up.product.name}"></td>
+        <td class="py-3 px-6 text-left" th:text="${up.quantity}"></td>
+        <td class="py-3 px-6 text-left" th:text="${#numbers.formatDecimal(up.quantity * up.product.price, 2, 'COMMA', 2, 'POINT')}"></td>
+        <td class="py-3 px-6 text-left">
+          <a th:href="@{/users/{userId}/products/{id}/edit(userId=${user.id}, id=${up.id})}" class="text-blue-500 hover:text-blue-700 mr-2">Edit</a>
+          <a th:href="@{/users/{userId}/products/{id}/delete(userId=${user.id}, id=${up.id})}" class="text-red-500 hover:text-red-700">Delete</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <a href="/users" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded mt-4 inline-block">Back</a>
+</div>
+</body>
+</html>

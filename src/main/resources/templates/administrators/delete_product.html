@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Product</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+<div class="container mx-auto p-6">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Delete Product</h1>
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <p class="text-gray-700 mb-4">Are you sure you want to delete product: <span th:text="${product.name}" class="font-semibold"></span>?</p>
+        <form th:action="@{/administrators/products/{id}/delete(id=${product.id})}" method="post">
+            <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Confirm Delete</button>
+            <a href="/administrators/products" class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-2">Back</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>
