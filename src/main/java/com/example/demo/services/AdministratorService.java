@@ -18,8 +18,11 @@ public class AdministratorService {
     private UserRepository userRepository;
     @Autowired
     private ProductRepository productRepository;
+    private final UserProductRepository userProductRepository;
     @Autowired
-    private UserProductRepository userProductRepository;
+    public AdministratorService(UserProductRepository userProductRepository) {
+        this.userProductRepository = userProductRepository;
+    }
 
     public Administrator saveAdministrator(Administrator administrator) {
         return administratorRepository.save(administrator);
