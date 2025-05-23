@@ -24,10 +24,20 @@ steps:
   - script: java -version
     displayName: 'Verify JDK 23 installation'
 
+  - script: |
+      wget https://apache.osuosl.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
+      tar -xzf apache-maven-3.9.6-bin.tar.gz -C $HOME
+      echo "##vso[task.setvariable variable=M2_HOME]${HOME}/apache-maven-3.9.6"
+      echo "##vso[task.prependpath]${HOME}/apache-maven-3.9.6/bin"
+    displayName: 'Download and install Maven'
+
+  - script: mvn -version
+    displayName: 'Verify Maven installation'
+
   - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
-      mavenOptions: '-Xmx3072m -e -X'
+      mavenOptions: '-Xmx3072m'  # Removed -e -X to avoid unrecognized option
       javaHomeOption: 'Path'
       jdkDirectory: '$(JAVA_HOME)'
       jdkArchitectureOption: 'x64'
