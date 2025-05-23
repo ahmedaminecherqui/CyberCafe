@@ -25,7 +25,7 @@ steps:
     displayName: 'Verify JDK 23 installation'
 
   - script: |
-      wget https://apache.osuosl.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz
+      wget https://downloads.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz
       tar -xzf apache-maven-3.9.9-bin.tar.gz -C $HOME
       ls -l $HOME  # Debug: List directory contents to verify extraction
       if [ -d "$HOME/apache-maven-3.9.9" ]; then
