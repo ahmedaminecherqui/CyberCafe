@@ -13,20 +13,23 @@ steps:
   - script: java -version
     displayName: 'Check JDK version'
 
-  - task: JavaToolInstaller@1
-    inputs:
-      versionSpec: '23'
-      jdkArchitectureOption: 'x64'
-      jdkSourceOption: 'DownloadFromUrl'
-      downloadUrl: 'https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23+37/OpenJDK23U-jdk_x64_linux_hotspot_23_37.tar.gz'  # Replace with the correct URL
-    displayName: 'Set Java version to 23'
+  - script: |
+      wget -O jdk-23.tar.gz 'https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23+37/OpenJDK23U-jdk_x64_linux_hotspot_23_37.tar.gz'
+      mkdir -p $HOME/jdk-23
+      tar -xzf jdk-23.tar.gz -C $HOME/jdk-23 --strip-components=1
+      echo "##vso[task.setvariable variable=JAVA_HOME]${HOME}/jdk-23"
+      echo "##vso[task.prependpath]${HOME}/jdk-23/bin"
+    displayName: 'Download and install JDK 23'
+
+  - script: java -version
+    displayName: 'Verify JDK 23 installation'
 
   - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
       mavenOptions: '-Xmx3072m -e -X'
-      javaHomeOption: 'JDKVersion'
-      jdkVersionOption: '23'
+      javaHomeOption: 'Path'
+      jdkDirectory: '$(JAVA_HOME)'
       jdkArchitectureOption: 'x64'
       publishJUnitResults: true
       testResultsFiles: '**/surefire-reports/TEST-*.xml'
