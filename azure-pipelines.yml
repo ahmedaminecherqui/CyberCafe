@@ -27,12 +27,20 @@ steps:
   - script: |
       wget https://apache.osuosl.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz
       tar -xzf apache-maven-3.9.9-bin.tar.gz -C $HOME
-      echo "##vso[task.setvariable variable=M2_HOME]${HOME}/apache-maven-3.9.9"
-      echo "##vso[task.prependpath]${HOME}/apache-maven-3.9.9/bin"
+      ls -l $HOME  # Debug: List directory contents to verify extraction
+      if [ -d "$HOME/apache-maven-3.9.9" ]; then
+        echo "##vso[task.setvariable variable=M2_HOME]${HOME}/apache-maven-3.9.9"
+        echo "##vso[task.prependpath]${HOME}/apache-maven-3.9.9/bin"
+        echo "Maven installed at ${HOME}/apache-maven-3.9.9"
+      else
+        echo "Error: Maven directory not found after extraction"
+        exit 1
+      fi
     displayName: 'Download and install Maven 3.9.9'
 
   - script: mvn -version
     displayName: 'Verify Maven installation'
+    condition: succeeded()
 
   - task: Maven@3
     inputs:
