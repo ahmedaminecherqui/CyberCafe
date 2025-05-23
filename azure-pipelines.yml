@@ -20,6 +20,8 @@ steps:
       echo "##vso[task.setvariable variable=JAVA_HOME]${HOME}/jdk-23"
       echo "##vso[task.prependpath]${HOME}/jdk-23/bin"
       java -version  # Verify Java is accessible after setting PATH
+      echo "JAVA_HOME is set to: $JAVA_HOME"
+      echo "PATH includes: $PATH"
     displayName: 'Download and install JDK 23'
 
   - script: java -version
@@ -34,6 +36,8 @@ steps:
         echo "##vso[task.prependpath]${HOME}/apache-maven-3.9.9/bin"
         echo "Maven installed at ${HOME}/apache-maven-3.9.9"
         mvn -version  # Verify Maven is accessible after setting PATH
+        echo "M2_HOME is set to: $M2_HOME"
+        echo "PATH includes: $PATH"
       else
         echo "Error: Maven directory not found after extraction"
         exit 1
@@ -47,7 +51,7 @@ steps:
   - task: Maven@3
     inputs:
       mavenPomFile: 'pom.xml'
-      mavenOptions: '-Xmx2048m -e -X'  # Reduced memory to 2048m to avoid JVM issues
+      mavenOptions: '-Xmx2048m'  # Removed -e -X to avoid JVM issues, can re-add later for debugging
       javaHomeOption: 'Path'
       jdkDirectory: '$(JAVA_HOME)'
       jdkArchitectureOption: 'x64'
