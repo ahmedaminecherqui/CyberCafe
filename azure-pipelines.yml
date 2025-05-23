@@ -17,9 +17,9 @@ steps:
     inputs:
       versionSpec: '23'
       jdkArchitectureOption: 'x64'
-      jdkSourceOption: 'DownloadFromUrl'  # Change to DownloadFromUrl
-      downloadUrl: 'https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23/...'  # Replace with the actual URL for Java 23
-      displayName: 'Set Java version to 23'
+      jdkSourceOption: 'DownloadFromUrl'
+      downloadUrl: 'https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23+37/OpenJDK23U-jdk_x64_linux_hotspot_23_37.tar.gz'  # Replace with the correct URL
+    displayName: 'Set Java version to 23'
 
   - task: Maven@3
     inputs:
