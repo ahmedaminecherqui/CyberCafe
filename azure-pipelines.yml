@@ -1,0 +1,68 @@
+# Maven
+# Build your Java project and run tests with Apache Maven.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+trigger:
+  - master
+
+pool:
+  vmImage: 'Ubuntu-latest'
+
+steps:
+  - script: java -version
+    displayName: 'Check JDK version'
+
+  - script: |
+      wget -O jdk-23.tar.gz 'https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23+37/OpenJDK23U-jdk_x64_linux_hotspot_23_37.tar.gz'
+      mkdir -p $HOME/jdk-23
+      tar -xzf jdk-23.tar.gz -C $HOME/jdk-23 --strip-components=1
+      echo "##vso[task.setvariable variable=JAVA_HOME]${HOME}/jdk-23"
+      echo "##vso[task.prependpath]${HOME}/jdk-23/bin"
+      java -version
+      echo "JAVA_HOME is set to: $JAVA_HOME"
+      echo "PATH includes: $PATH"
+    displayName: 'Download and install JDK 23'
+
+  - script: java -version
+    displayName: 'Verify JDK 23 installation'
+
+  - script: |
+      wget https://downloads.apache.org/maven/maven-3/3.9.9/binaries/apache-maven-3.9.9-bin.tar.gz
+      tar -xzf apache-maven-3.9.9-bin.tar.gz -C $HOME
+      ls -l $HOME
+      if [ -d "$HOME/apache-maven-3.9.9" ]; then
+        echo "##vso[task.setvariable variable=M2_HOME]${HOME}/apache-maven-3.9.9"
+        echo "##vso[task.prependpath]${HOME}/apache-maven-3.9.9/bin"
+        echo "Maven installed at ${HOME}/apache-maven-3.9.9"
+        mvn -version
+        echo "M2_HOME is set to: $M2_HOME"
+        echo "PATH includes: $PATH"
+      else
+        echo "Error: Maven directory not found after extraction"
+        exit 1
+      fi
+    displayName: 'Download and install Maven 3.9.9'
+
+  - script: mvn -version
+    displayName: 'Verify Maven installation'
+    condition: succeeded()
+
+  - task: Maven@3
+    inputs:
+      mavenPomFile: 'pom.xml'
+      mavenOptions: '-Xmx2048m -X'  # Enable debug logging for more details
+      javaHomeOption: 'Path'
+      jdkDirectory: '$(JAVA_HOME)'
+      jdkArchitectureOption: 'x64'
+      publishJUnitResults: true
+      testResultsFiles: '**/surefire-reports/TEST-*.xml'
+      goals: 'clean package'
+    displayName: 'Build and test with Maven'
+
+  - script: |
+      echo "Listing test reports (if any):"
+      ls -l /home/vsts/work/1/s/target/surefire-reports || echo "No test reports found"
+      cat /home/vsts/work/1/s/target/surefire-reports/*.txt || echo "No .txt reports to display"
+    displayName: 'Inspect test reports'
+    condition: failed()  # Run only if the previous step fails
