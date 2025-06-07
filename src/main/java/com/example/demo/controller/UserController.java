@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.entite.*;
+import com.example.demo.entity.*;
 import com.example.demo.services.*;
 
 

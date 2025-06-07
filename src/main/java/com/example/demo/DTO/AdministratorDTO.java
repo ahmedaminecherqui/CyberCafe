@@ -1,26 +1,27 @@
-package com.example.demo.entite;
+package com.example.demo.DTO;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-@Entity
-@Table(name = "administrators")
-public class Administrator {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class AdministratorDTO {
     private Long id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "{validation.name.required}")
+    @Size(min = 2, max = 100, message = "{validation.name.size}")
     private String name;
 
-    @Column(nullable = false)
+    @NotBlank(message = "{validation.phone.required}")
+    @Size(min = 10, max = 20, message = "{validation.phone.size}")
     private String phone;
 
-    @Column(nullable = false)
+    @NotBlank(message = "{validation.address.required}")
+    @Size(min = 5, max = 255, message = "{validation.address.size}")
     private String address;
 
     // Constructors
-    public Administrator() {}
-    public Administrator(String name, String phone, String address) {
+    public AdministratorDTO() {}
+    public AdministratorDTO(Long id, String name, String phone, String address) {
+        this.id = id;
         this.name = name;
         this.phone = phone;
         this.address = address;

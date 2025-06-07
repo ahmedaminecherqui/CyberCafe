@@ -1,29 +1,30 @@
-package com.example.demo.entite;
+package com.example.demo.DTO;
 
-import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-@Entity
-@Table(name = "products")
-public class Product {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class ProductDTO {
     private Long id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "{validation.product.name.required}")
+    @Size(min = 2, max = 100, message = "{validation.product.name.size}")
     private String name;
 
-    @Column(nullable = false)
+    @NotBlank(message = "{validation.product.type.required}")
+    @Size(min = 2, max = 50, message = "{validation.product.type.size}")
     private String type;
 
-    @Column(nullable = false)
+    @Min(value = 0, message = "{validation.product.price.min}")
     private double price;
 
-    @Column(nullable = false)
+    @Min(value = 0, message = "{validation.product.stock.min}")
     private int stock;
 
     // Constructors
-    public Product() {}
-    public Product(String name, String type, double price, int stock) {
+    public ProductDTO() {}
+    public ProductDTO(Long id, String name, String type, double price, int stock) {
+        this.id = id;
         this.name = name;
         this.type = type;
         this.price = price;

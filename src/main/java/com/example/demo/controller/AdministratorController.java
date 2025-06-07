@@ -1,19 +1,28 @@
 package com.example.demo.controller;
 
-import com.example.demo.entite.*;
-import com.example.demo.services.*;
+import com.example.demo.entity.Administrator;
+import com.example.demo.entity.Product;
+import com.example.demo.services.AdministratorService;
+import com.example.demo.services.ProductService;
+import com.example.demo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/administrators")
 public class AdministratorController {
+
     @Autowired
     private AdministratorService administratorService;
+
     @Autowired
     private UserService userService;
+
     @Autowired
     private ProductService productService;
 
@@ -30,7 +39,10 @@ public class AdministratorController {
     }
 
     @PostMapping
-    public String createAdministrator(@ModelAttribute("administrator") Administrator administrator, Model model) {
+    public String createAdministrator(@Valid @ModelAttribute("administrator") Administrator administrator, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "administrators/create";
+        }
         administratorService.saveAdministrator(administrator);
         return "redirect:/administrators";
     }
@@ -44,7 +56,10 @@ public class AdministratorController {
     }
 
     @PostMapping("/{id}")
-    public String updateAdministrator(@PathVariable Long id, @ModelAttribute("administrator") Administrator administrator, Model model) {
+    public String updateAdministrator(@PathVariable Long id, @Valid @ModelAttribute("administrator") Administrator administrator, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "administrators/edit";
+        }
         administrator.setId(id);
         administratorService.saveAdministrator(administrator);
         return "redirect:/administrators";
@@ -84,7 +99,10 @@ public class AdministratorController {
     }
 
     @PostMapping("/products")
-    public String createProduct(@ModelAttribute("product") Product product, Model model) {
+    public String createProduct(@Valid @ModelAttribute("product") Product product, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "administrators/create_product";
+        }
         productService.saveProduct(product);
         return "redirect:/administrators/products";
     }
@@ -98,7 +116,10 @@ public class AdministratorController {
     }
 
     @PostMapping("/products/{id}")
-    public String updateProduct(@PathVariable Long id, @ModelAttribute("product") Product product, Model model) {
+    public String updateProduct(@PathVariable Long id, @Valid @ModelAttribute("product") Product product, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "administrators/edit_product";
+        }
         product.setId(id);
         productService.saveProduct(product);
         return "redirect:/administrators/products";

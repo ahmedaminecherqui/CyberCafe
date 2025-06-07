@@ -1,13 +1,13 @@
 package com.example.demo.DAO;
 
 
-import com.example.demo.entite.UserProduct;
+
+
+import com.example.demo.entity.UserProduct;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-@Repository
 public interface UserProductRepository extends JpaRepository<UserProduct, Long> {
-    List<UserProduct> findByUserId(Long userId);
+    Page<UserProduct> findByUserId(Long userId, Pageable pageable);
 }

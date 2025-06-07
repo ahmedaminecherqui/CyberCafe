@@ -1,9 +1,17 @@
 package com.example.demo.services;
 
-import com.example.demo.DAO.*;
-import com.example.demo.entite.*;
-
+import com.example.demo.DAO.ProductRepository;
+import com.example.demo.DAO.RoleRepository;
+import com.example.demo.DAO.UserProductRepository;
+import com.example.demo.DAO.UserRepository;
+import com.example.demo.entity.Product;
+import com.example.demo.entity.Role;
+import com.example.demo.entity.User;
+import com.example.demo.entity.UserProduct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,6 +20,7 @@ import java.util.Optional;
 
 @Service
 public class UserService {
+
     @Autowired
     private UserRepository userRepository;
 
@@ -21,12 +30,41 @@ public class UserService {
     @Autowired
     private UserProductRepository userProductRepository;
 
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public User signup(String name, String username, String password, String phone, String address, double wallet, String roleName) {
+        User user = new User();
+        user.setName(name);
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setPhone(phone);
+        user.setAddress(address);
+        user.setWallet(wallet);
+
+        Role role = roleRepository.findByName(roleName);
+        if (role == null) {
+            role = new Role(roleName);
+            roleRepository.save(role);
+        }
+        user.setRole(role);
+
         return userRepository.save(user);
     }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public Page<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     public Optional<User> getUserById(Long id) {
@@ -52,28 +90,22 @@ public class UserService {
         User u = optionalUser.get();
         Product p = optionalProduct.get();
 
-        // Calculate total cost
         double totalCost = p.getPrice() * quantity;
 
-        // Check wallet balance
         if (u.getWallet() < totalCost) {
             return "Insufficient funds. Required: " + totalCost + ", Available: " + u.getWallet();
         }
 
-        // Check stock availability
         if (p.getStock() < quantity) {
             return "Insufficient stock. Requested: " + quantity + ", Available: " + p.getStock();
         }
 
-        // Deduct from wallet and stock
         u.setWallet(u.getWallet() - totalCost);
         p.setStock(p.getStock() - quantity);
 
-        // Save updated user and product
         userRepository.save(u);
         productRepository.save(p);
 
-        // Create or update UserProduct entry
         UserProduct userProduct = new UserProduct(u, p, quantity);
         userProductRepository.save(userProduct);
 

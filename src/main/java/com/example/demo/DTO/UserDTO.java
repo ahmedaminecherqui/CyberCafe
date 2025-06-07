@@ -1,33 +1,31 @@
-package com.example.demo.entite;
+package com.example.demo.DTO;
 
-import jakarta.persistence.*;
-import java.util.List;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-@Entity
-@Table(name = "users")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserDTO {
     private Long id;
 
-    @Column(nullable = false)
+    @NotBlank(message = "{validation.name.required}")
+    @Size(min = 2, max = 100, message = "{validation.name.size}")
     private String name;
 
-    @Column(nullable = false)
+    @NotBlank(message = "{validation.phone.required}")
+    @Size(min = 10, max = 20, message = "{validation.phone.size}")
     private String phone;
 
-    @Column(nullable = false)
+    @NotBlank(message = "{validation.address.required}")
+    @Size(min = 5, max = 255, message = "{validation.address.size}")
     private String address;
 
-    @Column(nullable = false)
+    @Min(value = 0, message = "{validation.wallet.min}")
     private double wallet;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserProduct> purchasedProducts;
-
     // Constructors
-    public User() {}
-    public User(String name, String phone, String address, double wallet) {
+    public UserDTO() {}
+    public UserDTO(Long id, String name, String phone, String address, double wallet) {
+        this.id = id;
         this.name = name;
         this.phone = phone;
         this.address = address;
@@ -45,6 +43,4 @@ public class User {
     public void setAddress(String address) { this.address = address; }
     public double getWallet() { return wallet; }
     public void setWallet(double wallet) { this.wallet = wallet; }
-    public List<UserProduct> getPurchasedProducts() { return purchasedProducts; }
-    public void setPurchasedProducts(List<UserProduct> purchasedProducts) { this.purchasedProducts = purchasedProducts; }
 }

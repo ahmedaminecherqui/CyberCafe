@@ -1,9 +1,10 @@
 package com.example.demo.DAO;
 
-import com.example.demo.entity.Product;
+import com.example.demo.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
+    Role findByName(String name);
 }
